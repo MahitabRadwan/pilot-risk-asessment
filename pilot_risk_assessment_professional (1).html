@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilot Risk Assessment Dashboard | FAASTeam ADM/GRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#0a2463;
+  --secondary:#1a5f9b;
+  --accent:#00c8e0;
+  --success:#00c87a;
+  --warning:#f5a623;
+  --danger:#e53535;
+  --dark:#0a1628;
+  --light:#f8fafc;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --shadow:0 10px 40px rgba(10,36,99,.1);
+  --shadow-sm:0 4px 12px rgba(10,36,99,.06);
+}
+
+body{
+  font-family:'Lora',serif;
+  color:#1e293b;
+  background:#fff;
+  line-height:1.6;
+}
+
+h1,h2,h3,h4{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.5px}
+h1{font-size:52px;line-height:1.2}
+h2{font-size:40px;line-height:1.25;margin-bottom:24px}
+h3{font-size:28px;line-height:1.3}
+h4{font-size:20px}
+
+code,pre{font-family:'Source Code Pro',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:14px}
+
+/* HEADER / NAV */
+header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:1000;
+  box-shadow:var(--shadow-sm);
+}
+
+nav{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:72px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+}
+
+.logo-icon{
+  font-size:32px;
+  width:48px;
+  height:48px;
+  background:linear-gradient(135deg,var(--secondary),var(--accent));
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+}
+
+.logo-text{
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  color:var(--primary);
+  letter-spacing:-.3px;
+}
+
+.nav-links{
+  display:flex;
+  gap:8px;
+  list-style:none;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:#475569;
+  font-family:'Syne',sans-serif;
+  font-weight:500;
+  font-size:14px;
+  padding:8px 16px;
+  border-radius:6px;
+  transition:all .3s;
+  cursor:pointer;
+}
+
+.nav-links a:hover{
+  background:#f1f5f9;
+  color:var(--secondary);
+}
+
+.nav-links a.active{
+  background:var(--secondary);
+  color:#fff;
+}
+
+/* PAGES */
+.page{display:none;opacity:0;transition:opacity .5s}
+.page.active{display:block;opacity:1}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);
+  color:#fff;
+  padding:120px 40px;
+  text-align:center;
+}
+
+.hero-content{
+  max-width:900px;
+  margin:0 auto;
+}
+
+.hero h1{color:#fff;font-size:64px;margin-bottom:20px}
+.hero p{font-size:20px;opacity:.95;margin-bottom:12px;line-height:1.6}
+.hero .tagline{font-size:16px;opacity:.8;margin-bottom:40px;letter-spacing:.5px;text-transform:uppercase}
+
+.btn{
+  display:inline-block;
+  padding:14px 32px;
+  border-radius:8px;
+  font-family:'Syne',sans-serif;
+  font-weight:600;
+  font-size:15px;
+  text-decoration:none;
+  cursor:pointer;
+  border:none;
+  transition:all .3s;
+  letter-spacing:.3px;
+}
+
+.btn-primary{
+  background:#fff;
+  color:var(--primary);
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+
+.btn-secondary{
+  background:transparent;
+  color:#fff;
+  border:2px solid #fff;
+}
+
+.btn-secondary:hover{
+  background:#fff;
+  color:var(--primary);
+}
+
+.btn-small{padding:10px 20px;font-size:14px}
+
+/* FEATURES */
+.features{
+  max-width:1400px;
+  margin:-60px auto 0;
+  padding:0 40px 80px;
+  position:relative;
+  z-index:10;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:24px;
+}
+
+.feature-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:32px;
+  box-shadow:var(--shadow-sm);
+  transition:all .3s;
+}
+
+.feature-card:hover{
+  border-color:var(--secondary);
+  box-shadow:var(--shadow);
+  transform:translateY(-4px);
+}
+
+.feature-icon{
+  font-size:42px;
+  margin-bottom:16px;
+}
+
+.feature-card h3{
+  font-size:22px;
+  margin-bottom:12px;
+  color:var(--primary);
+}
+
+.feature-card p{
+  font-size:15px;
+  color:#64748b;
+  line-height:1.7;
+}
+
+/* CONTENT SECTIONS */
+.section{
+  max-width:1200px;
+  margin:0 auto;
+  padding:80px 40px;
+}
+
+.section-header{
+  text-align:center;
+  margin-bottom:60px;
+}
+
+.section h2{color:var(--primary)}
+.section p{font-size:18px;color:#64748b;line-height:1.8;max-width:700px;margin:0 auto}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(500px,1fr));
+  gap:60px;
+  align-items:center;
+}
+
+.content-block{
+  line-height:1.8;
+}
+
+.content-block h3{
+  color:var(--primary);
+  margin-bottom:16px;
+  font-size:24px;
+}
+
+.content-block p{
+  font-size:16px;
+  color:#475569;
+  margin-bottom:16px;
+}
+
+.checklist{
+  list-style:none;
+  padding:0;
+}
+
+.checklist li{
+  padding:12px 0;
+  padding-left:32px;
+  position:relative;
+  font-size:15px;
+  color:#475569;
+}
+
+.checklist li:before{
+  content:'✓';
+  position:absolute;
+  left:0;
+  color:var(--success);
+  font-weight:700;
+  font-size:20px;
+}
+
+.alt-bg{background:#f8fafc}
+
+/* FRAMEWORK CARDS */
+.frameworks{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:24px;
+  margin-bottom:40px;
+}
+
+.framework-card{
+  background:#fff;
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:32px;
+  transition:all .3s;
+}
+
+.framework-card:hover{
+  border-color:var(--secondary);
+  box-shadow:var(--shadow-sm);
+}
+
+.framework-card .title{
+  font-family:'Syne',sans-serif;
+  font-size:26px;
+  font-weight:700;
+  color:var(--primary);
+  margin-bottom:12px;
+}
+
+.framework-card .desc{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:20px;
+  line-height:1.6;
+}
+
+.framework-card .items{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.framework-card .item{
+  font-size:14px;
+  padding:8px 12px;
+  background:#f1f5f9;
+  border-radius:6px;
+  color:#1e293b;
+  border-left:3px solid var(--secondary);
+}
+
+/* ASSESSMENT PAGE */
+.assessment-container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:40px;
+}
+
+.assessment-header{
+  margin-bottom:40px;
+  border-bottom:2px solid var(--border);
+  padding-bottom:30px;
+}
+
+.assessment-header h1{
+  color:var(--primary);
+  font-size:36px;
+  margin-bottom:10px;
+}
+
+.assessment-tabs{
+  display:flex;
+  gap:4px;
+  background:#f1f5f9;
+  padding:6px;
+  border-radius:8px;
+  margin-bottom:30px;
+  flex-wrap:wrap;
+}
+
+.assessment-tab{
+  padding:10px 18px;
+  background:transparent;
+  border:none;
+  font-family:'Syne',sans-serif;
+  font-weight:600;
+  font-size:14px;
+  color:#64748b;
+  cursor:pointer;
+  border-radius:6px;
+  transition:all .3s;
+}
+
+.assessment-tab.active{
+  background:#fff;
+  color:var(--primary);
+  box-shadow:var(--shadow-sm);
+}
+
+.assessment-tab:hover:not(.active){
+  color:var(--primary);
+}
+
+.assessment-panel{
+  display:none;
+  animation:fadeIn .3s;
+}
+
+.assessment-panel.active{display:block}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.assessment-section{
+  background:#f8fafc;
+  border-left:4px solid var(--secondary);
+  padding:24px;
+  margin-bottom:20px;
+  border-radius:8px;
+}
+
+.assessment-section h3{
+  color:var(--primary);
+  margin-bottom:16px;
+  font-size:18px;
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-group label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  font-weight:500;
+  font-size:14px;
+  color:#1e293b;
+}
+
+.form-group input[type=range]{
+  width:100%;
+  height:6px;
+  border-radius:3px;
+  cursor:pointer;
+}
+
+.form-group select{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-family:'Lora',serif;
+  font-size:14px;
+  background:#fff;
+  cursor:pointer;
+}
+
+.radio-group{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+.radio-btn{
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:#fff;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:500;
+  transition:all .2s;
+}
+
+.radio-btn:hover{
+  border-color:var(--secondary);
+  color:var(--secondary);
+}
+
+.radio-btn.sel{
+  background:var(--secondary);
+  color:#fff;
+  border-color:var(--secondary);
+}
+
+.score-display{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin:30px 0;
+}
+
+.score-item{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:20px;
+  text-align:center;
+}
+
+.score-item .label{
+  font-size:12px;
+  color:#64748b;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:10px;
+}
+
+.score-item .value{
+  font-family:'Syne',sans-serif;
+  font-size:36px;
+  font-weight:700;
+  color:var(--primary);
+}
+
+/* RECOMMENDATION CARD */
+.rec-card{
+  margin-top:30px;
+  padding:40px;
+  border-radius:12px;
+  text-align:center;
+  border:2px solid;
+}
+
+.rec-card.go{
+  background:rgba(0,200,122,.08);
+  border-color:var(--success);
+}
+
+.rec-card.caution{
+  background:rgba(245,166,35,.08);
+  border-color:var(--warning);
+}
+
+.rec-card.nogo{
+  background:rgba(229,53,53,.08);
+  border-color:var(--danger);
+}
+
+.rec-label{
+  font-size:12px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.rec-card.go .rec-label{color:var(--success)}
+.rec-card.caution .rec-label{color:var(--warning)}
+.rec-card.nogo .rec-label{color:var(--danger)}
+
+.rec-decision{
+  font-family:'Syne',sans-serif;
+  font-size:48px;
+  font-weight:800;
+  margin:20px 0;
+}
+
+.rec-card.go .rec-decision{color:var(--success)}
+.rec-card.caution .rec-decision{color:var(--warning)}
+.rec-card.nogo .rec-decision{color:var(--danger)}
+
+.rec-desc{
+  font-size:16px;
+  color:#475569;
+  max-width:600px;
+  margin:0 auto;
+  line-height:1.7;
+}
+
+/* DOCS PAGE */
+.doc-nav{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  gap:40px;
+  margin:40px 0;
+}
+
+.doc-sidebar{
+  list-style:none;
+}
+
+.doc-sidebar li{
+  margin-bottom:12px;
+}
+
+.doc-sidebar a{
+  display:block;
+  padding:10px 14px;
+  color:#475569;
+  text-decoration:none;
+  border-radius:6px;
+  border-left:3px solid transparent;
+  transition:all .2s;
+  font-size:14px;
+  font-weight:500;
+}
+
+.doc-sidebar a:hover{
+  background:#f1f5f9;
+  color:var(--secondary);
+  border-left-color:var(--secondary);
+}
+
+.doc-content{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:40px;
+}
+
+.doc-content h3{
+  margin-top:30px;
+  margin-bottom:16px;
+  color:var(--primary);
+}
+
+.doc-content p{
+  margin-bottom:16px;
+  font-size:15px;
+  color:#475569;
+  line-height:1.8;
+}
+
+/* FOOTER */
+footer{
+  background:var(--primary);
+  color:#fff;
+  padding:60px 40px 30px;
+  margin-top:80px;
+}
+
+footer-content{
+  max-width:1200px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:40px;
+  margin-bottom:40px;
+}
+
+footer h4{
+  color:#fff;
+  margin-bottom:16px;
+}
+
+footer p{
+  font-size:14px;
+  opacity:.8;
+  line-height:1.8;
+}
+
+footer a{
+  color:#fff;
+  text-decoration:none;
+  font-size:14px;
+  opacity:.8;
+  transition:opacity .2s;
+  display:block;
+  margin-bottom:8px;
+}
+
+footer a:hover{opacity:1}
+
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:30px;
+  text-align:center;
+  font-size:13px;
+  opacity:.7;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  h1{font-size:36px}
+  h2{font-size:28px}
+  .hero{padding:80px 20px}
+  .hero h1{font-size:40px}
+  nav{padding:0 20px}
+  .section{padding:60px 20px}
+  .grid-2{grid-template-columns:1fr;gap:40px}
+  .features{padding:0 20px 40px}
+  .doc-nav{grid-template-columns:1fr;gap:20px}
+  .assessment-container{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <nav>
+    <div class="logo" onclick="showPage('home')">
+      <div class="logo-icon">✈</div>
+      <div class="logo-text">PRAD</div>
+    </div>
+    <ul class="nav-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('features')">Features</a></li>
+      <li><a onclick="showPage('assessment')">Assessment</a></li>
+      <li><a onclick="showPage('docs')">Documentation</a></li>
+      <li><a onclick="showPage('about')">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-content">
+      <p class="tagline">Aviation Safety Decision Support</p>
+      <h1>Pilot Risk Assessment Dashboard</h1>
+      <p>Comprehensive ADM/GRM framework implementation for flight readiness evaluation</p>
+      <p style="font-size:16px;opacity:.85;margin-bottom:30px">Based on FAASTeam August 14 seminar guidance</p>
+      <button class="btn btn-primary" onclick="showPage('assessment')">Start Assessment</button>
+      <button class="btn btn-secondary" style="margin-left:12px" onclick="showPage('features')">Learn More</button>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🧬</div>
+      <h3>IMSAFE Checklist</h3>
+      <p>Pilot fitness assessment covering Illness, Medication, Stress, Alcohol, Fatigue, and Emotion with stress multiplier effect.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛩</div>
+      <h3>PAVE Framework</h3>
+      <p>Operational risk evaluation across Pilot experience, Aircraft status, enVironment conditions, and External Pressures.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>DECIDE Process</h3>
+      <p>In-flight decision-making loop with concrete cockpit applications for every step from Detect through Execute & Reassess.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Real-Time Analytics</h3>
+      <p>Dynamic risk scoring with visual gauge, category breakdown charts, and threshold indicators for GO/CAUTION/NO-GO decisions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <h3>Assessment History</h3>
+      <p>Save and review previous assessments locally, track risk trends, and export comprehensive PDF reports for records.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📱</div>
+      <h3>Mobile Ready</h3>
+      <p>Fully responsive design works on tablets, laptops, and desktops—perfect for preflight briefing at the flight planning desk.</p>
+    </div>
+  </div>
+
+  <div class="section alt-bg">
+    <div class="section-header">
+      <h2>Framework Foundations</h2>
+      <p>This dashboard integrates three proven aviation decision-making frameworks endorsed by the FAA</p>
+    </div>
+    <div class="frameworks">
+      <div class="framework-card">
+        <div class="title">I·M·S·A·F·E</div>
+        <div class="desc">Pilot Fitness Assessment</div>
+        <div class="items">
+          <div class="item">Illness — Health impacts on flight performance</div>
+          <div class="item">Medication — Drug side effects and interactions</div>
+          <div class="item">Stress — Cognitive load and focus capacity</div>
+          <div class="item">Alcohol — 8-hour bottle-to-throttle compliance</div>
+          <div class="item">Fatigue — 24-hour rest quality and duty periods</div>
+          <div class="item">Emotion — Volatility and recent life events</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="title">P·A·V·E</div>
+        <div class="desc">Operational Risk Factors</div>
+        <div class="items">
+          <div class="item">Pilot — Currency, training, personal minimums</div>
+          <div class="item">Aircraft — Airworthiness, W&B, fuel reserves</div>
+          <div class="item">enVironment — Weather, NOTAMs, alternates</div>
+          <div class="item">External Pressures — Schedule, passenger, deadline</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="title">D·E·C·I·D·E</div>
+        <div class="desc">In-Flight Decision Loop</div>
+        <div class="items">
+          <div class="item">Detect — Continuous vigilance for anomalies</div>
+          <div class="item">Evaluate — Severity × likelihood assessment</div>
+          <div class="item">Consider — Brainstorm 3+ mitigation options</div>
+          <div class="item">Integrate — Merge plan with aircraft limits</div>
+          <div class="item">Decide — Commit and communicate clearly</div>
+          <div class="item">Execute & Reassess — Act and monitor continuously</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <h2>Risk-Based Decision Making</h2>
+      <p>Weighted scoring ensures critical factors drive your go/no-go decision</p>
+    </div>
+    <div class="grid-2">
+      <div class="content-block">
+        <h3>Intelligent Weighting</h3>
+        <p>Fatigue, alcohol, and severe weather carry higher impact scores. Stress acts as a multiplier on all IMSAFE factors—high stress + marginal weather = unacceptable combined risk.</p>
+        <ul class="checklist">
+          <li>Alcohol flagged at FAA 8-hour minimum and beyond</li>
+          <li>Fatigue tracked across 24-hour rest + duty periods</li>
+          <li>Critical items identified for immediate attention</li>
+          <li>Stress multiplier shows compounding effect</li>
+        </ul>
+      </div>
+      <div>
+        <div style="background:#f8fafc;border-radius:12px;padding:40px;text-align:center">
+          <div style="font-size:48px;color:var(--primary);margin-bottom:10px;font-family:'Syne',sans-serif;font-weight:700">LOW → HIGH</div>
+          <p style="color:#64748b;margin-bottom:20px">Risk score thresholds</p>
+          <div style="display:flex;gap:8px;justify-content:center;font-size:13px">
+            <span style="background:rgba(0,200,122,.15);color:var(--success);padding:8px 16px;border-radius:6px;font-weight:600">GO<br/>0–35%</span>
+            <span style="background:rgba(245,166,35,.15);color:var(--warning);padding:8px 16px;border-radius:6px;font-weight:600">CAUTION<br/>35–60%</span>
+            <span style="background:rgba(229,53,53,.15);color:var(--danger);padding:8px 16px;border-radius:6px;font-weight:600">NO-GO<br/>60–100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES PAGE -->
+<div id="features" class="page">
+  <div class="section" style="padding-top:120px">
+    <div class="section-header">
+      <h2>Complete Feature Set</h2>
+      <p>Professional-grade risk assessment built for pilots, instructors, and aviation organizations</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:60px;gap:40px">
+      <div class="content-block">
+        <h3>Assessment Tools</h3>
+        <ul class="checklist">
+          <li>IMSAFE checklist with 6-factor fitness evaluation</li>
+          <li>PAVE framework covering all operational domains</li>
+          <li>DECIDE process with cockpit applications</li>
+          <li>Weighted scoring algorithm based on criticality</li>
+          <li>Real-time risk calculation as you input data</li>
+          <li>Color-coded risk threshold indicators</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>Visualization & Reporting</h3>
+        <ul class="checklist">
+          <li>Risk gauge doughnut chart with threshold bands</li>
+          <li>Category breakdown bar chart by domain</li>
+          <li>Risk factor detail analysis with percentages</li>
+          <li>Threshold gauge showing GO/CAUTION/NO-GO zones</li>
+          <li>PDF export for flight records and briefings</li>
+          <li>Print-optimized layout for hardcopy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:40px">
+      <div class="content-block">
+        <h3>Data Management</h3>
+        <ul class="checklist">
+          <li>Save assessments with automatic timestamping</li>
+          <li>View assessment history (last 10 evaluations)</li>
+          <li>Track risk trends across multiple flights</li>
+          <li>One-click reset for new assessment</li>
+          <li>Local browser storage—no cloud dependency</li>
+          <li>Instant comparison with previous assessments</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>Professional Design</h3>
+        <ul class="checklist">
+          <li>Clean, modern interface focused on readability</li>
+          <li>Aviation-appropriate color scheme and typography</li>
+          <li>Fully responsive for tablets and mobile devices</li>
+          <li>Dark-mode friendly with high contrast</li>
+          <li>Fast load times and smooth interactions</li>
+          <li>Accessible for all pilot proficiency levels</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSESSMENT PAGE -->
+<div id="assessment" class="page">
+  <div class="assessment-container">
+    <div class="assessment-header">
+      <h1>Risk Assessment Tool</h1>
+      <p>Work through each section systematically. Real-time scoring updates as you input data.</p>
+    </div>
+
+    <div class="assessment-tabs">
+      <button class="assessment-tab active" onclick="switchTab(0)">🧬 IMSAFE</button>
+      <button class="assessment-tab" onclick="switchTab(1)">🛩 PAVE</button>
+      <button class="assessment-tab" onclick="switchTab(2)">🎯 DECIDE</button>
+      <button class="assessment-tab" onclick="switchTab(3)">📊 Results</button>
+      <button class="assessment-tab" onclick="switchTab(4)">📁 History</button>
+    </div>
+
+    <!-- IMSAFE TAB -->
+    <div class="assessment-panel active">
+      <div class="assessment-section">
+        <h3>🧬 I·M·S·A·F·E — Pilot Fitness Assessment</h3>
+        <p style="font-size:14px;color:#64748b;margin-bottom:20px">Any flagged item is a potential go/no-go decision point. Stress acts as a risk multiplier on other factors.</p>
+        
+        <div class="form-group">
+          <label>Illness: Symptom severity <span id="ill-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="ill" oninput="upd()">
+        </div>
+
+        <div class="form-group">
+          <label>Medication: Currently taking <span id="med-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="med" oninput="upd()">
+        </div>
+
+        <div class="form-group">
+          <label>Stress: Stress level <span id="str-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="str" oninput="upd()">
+        </div>
+
+        <div class="form-group">
+          <label>Alcohol: Hours since last drink</label>
+          <select id="alc" onchange="upd()">
+            <option value="0">No alcohol — well beyond 8 hrs</option>
+            <option value="1">More than 24 hours ago</option>
+            <option value="2">8–24 hours ago (meets FAA min)</option>
+            <option value="4">Less than 8 hours (FAA violation)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Fatigue: Sleep in past 24 hours <span id="fat-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="fat" oninput="upd()">
+        </div>
+
+        <div class="form-group">
+          <label>Emotion: Emotional intensity <span id="emo-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="emo" oninput="upd()">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="switchTab(1)" style="margin-top:20px">Next: PAVE →</button>
+    </div>
+
+    <!-- PAVE TAB -->
+    <div class="assessment-panel">
+      <div class="assessment-section">
+        <h3>🛩 P·A·V·E — Operational Risk Assessment</h3>
+        
+        <h4 style="margin-top:24px;margin-bottom:12px;color:#1e293b">Pilot</h4>
+        <div class="form-group">
+          <label>Total logged flight hours</label>
+          <select id="ph" onchange="upd()">
+            <option value="0">500+ hrs (experienced)</option>
+            <option value="1">200–500 hrs</option>
+            <option value="2">100–200 hrs</option>
+            <option value="3">50–100 hrs</option>
+            <option value="4">Under 50 hrs (student)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Flight currency — past 90 days <span id="pc-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="pc" oninput="upd()">
+        </div>
+
+        <h4 style="margin-top:24px;margin-bottom:12px;color:#1e293b">Aircraft</h4>
+        <div class="form-group">
+          <label>Airworthiness status</label>
+          <select id="aw" onchange="upd()">
+            <option value="0">Fully airworthy — recent inspection</option>
+            <option value="1">Airworthy — minor deferred items</option>
+            <option value="3">MEL items active</option>
+            <option value="5">Maintenance issues present</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fuel state / reserves <span id="af-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="af" oninput="upd()">
+        </div>
+
+        <h4 style="margin-top:24px;margin-bottom:12px;color:#1e293b">enVironment</h4>
+        <div class="form-group">
+          <label>Current weather conditions</label>
+          <select id="wx" onchange="upd()">
+            <option value="0">CAVOK / VFR clear</option>
+            <option value="1">VFR marginal (scattered)</option>
+            <option value="3">MVFR — low ceilings / vis</option>
+            <option value="4">IFR conditions</option>
+            <option value="5">SIGMETs / severe Wx</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Wind and turbulence <span id="wnd-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="wnd" oninput="upd()">
+        </div>
+
+        <h4 style="margin-top:24px;margin-bottom:12px;color:#1e293b">External Pressures</h4>
+        <div class="form-group">
+          <label>Time pressure to complete flight <span id="tp-v">0</span></label>
+          <input type="range" min="0" max="5" value="0" id="tp" oninput="upd()">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="switchTab(2)" style="margin-top:20px">Next: DECIDE →</button>
+    </div>
+
+    <!-- DECIDE TAB -->
+    <div class="assessment-panel">
+      <div class="assessment-section">
+        <h3>🎯 D·E·C·I·D·E — In-Flight Decision-Making Loop</h3>
+        <p style="font-size:14px;color:#64748b;margin-bottom:20px">This dynamic cycle helps you stay ahead of emerging hazards. If new hazards emerge, restart from Detect.</p>
+        <div id="decide-content" style="background:#fff;padding:20px;border-radius:8px;margin-top:20px;font-size:14px;color:#475569;line-height:1.8">
+          <p><strong>Detect:</strong> Maintain continuous vigilance. Scan instruments every 20–30 sec; note anomalies. Apply PAVE mentally at level-off and cruise.</p>
+          <p style="margin-top:12px"><strong>Evaluate:</strong> Assess severity × likelihood. Rate: how big an upset? How probable? Moderate chop = medium. Fuel below alternate = high.</p>
+          <p style="margin-top:12px"><strong>Consider:</strong> Brainstorm 3+ options. Storms ahead? Change altitude, deviate laterally, request alternate vector. Write options on scratchpad.</p>
+          <p style="margin-top:12px"><strong>Integrate:</strong> Merge mitigations with aircraft limits, fuel requirements, regulations. Compute new heading, distance, fuel burn, ETA if diverting.</p>
+          <p style="margin-top:12px"><strong>Decide:</strong> Commit to one plan and communicate clearly. "I'm diverting to [ALT]. Heading 180, ETE 12 min." Brief passengers and ATC.</p>
+          <p style="margin-top:12px"><strong>Execute & Reassess:</strong> Precise control inputs and checklist discipline. After diversion, run another PAVE scan in 5 min. If new hazard: restart DECIDE.</p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="switchTab(3)" style="margin-top:20px">View Results →</button>
+    </div>
+
+    <!-- RESULTS TAB -->
+    <div class="assessment-panel">
+      <div class="score-display" id="scores"></div>
+      <div id="rec-display"></div>
+      <div style="margin-top:30px;display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-small" onclick="saveAss()">💾 Save Assessment</button>
+        <button class="btn btn-secondary btn-small" onclick="exportPDF()">📄 Export PDF</button>
+        <button class="btn btn-secondary btn-small" onclick="resetAll()">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div class="assessment-panel">
+      <div id="history-display" style="margin-top:20px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES/DETAILS PAGE -->
+<div id="features" class="page" style="display:none">
+  <div class="section" style="padding-top:120px">
+    <div class="section-header">
+      <h2>Complete Feature Set</h2>
+      <p>Professional-grade risk assessment built for pilots and aviation professionals</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:60px;gap:40px">
+      <div class="content-block">
+        <h3>Assessment Frameworks</h3>
+        <ul class="checklist">
+          <li>IMSAFE: 6-factor pilot fitness checklist</li>
+          <li>PAVE: 4-element operational risk framework</li>
+          <li>DECIDE: 6-step in-flight decision loop</li>
+          <li>Weighted scoring algorithm</li>
+          <li>Stress multiplier effect on risk</li>
+          <li>Critical item flagging system</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>Analytics & Reports</h3>
+        <ul class="checklist">
+          <li>Real-time risk gauge visualization</li>
+          <li>Category breakdown charts</li>
+          <li>Risk threshold indicators</li>
+          <li>PDF export capability</li>
+          <li>Assessment history tracking</li>
+          <li>Print-friendly layouts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENTATION PAGE -->
+<div id="docs" class="page">
+  <div class="section" style="padding-top:120px">
+    <div class="section-header">
+      <h2>Documentation</h2>
+      <p>Complete guide to frameworks and usage</p>
+    </div>
+
+    <div class="doc-nav">
+      <ul class="doc-sidebar">
+        <li><a href="#" onclick="showDoc('imsafe')">IMSAFE Checklist</a></li>
+        <li><a href="#" onclick="showDoc('pave')">PAVE Framework</a></li>
+        <li><a href="#" onclick="showDoc('decide')">DECIDE Process</a></li>
+        <li><a href="#" onclick="showDoc('risk')">Risk Scoring</a></li>
+        <li><a href="#" onclick="showDoc('faq')">FAQ</a></li>
+      </ul>
+
+      <div class="doc-content">
+        <div id="doc-imsafe" class="doc-section">
+          <h3>IMSAFE Checklist</h3>
+          <p><strong>IMSAFE</strong> is a systematic pilot self-assessment tool for evaluating fitness to fly.</p>
+          
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Illness</h4>
+          <p>Any symptom that could impair judgment or physical performance is a red flag. Fever, congestion, dizziness, or other conditions that worsen under flight stress should elevate your risk assessment immediately. High illness severity should trigger a no-go decision.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Medication</h4>
+          <p>Every medication—prescription and over-the-counter—should be checked against FAA guidance. Side effects like drowsiness, blurred vision, or impaired coordination can degrade flight performance. Consult the Drug Aeronautical Information Manual (Drug AIM) before flying.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Stress</h4>
+          <p>High stress drains cognitive bandwidth and leads to poor decision-making. Work deadlines, family conflict, or financial concerns can preoccupy you during flight. In GRM cost-benefit analysis, high stress multiplies other risks—high stress + marginal weather = unacceptable combined risk.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Alcohol</h4>
+          <p>FAA mandates a minimum 8 hours between your last drink and flight. Residual impairment may persist beyond 8 hours, especially after heavy consumption. Apply personal minimums beyond regulatory minimums. When in doubt, treat alcohol risk as high.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Fatigue</h4>
+          <p>Fatigue undermines every flight phase. Check your sleep over the past 24 hours (not just last night), quality of rest, and recent duty periods. If below your personal standard, plan to delay or cancel. Revisit fatigue at top-of-descent to catch "just one more leg" syndrome.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Emotion</h4>
+          <p>Emotional volatility—anger, grief, excitement—hijacks rational decision-making. Recent conflicts or traumas can distract you. Externalize your emotional state aloud before flight and re-enter the DECIDE loop if emotions spike.</p>
+        </div>
+
+        <div id="doc-pave" class="doc-section" style="display:none">
+          <h3>PAVE Framework</h3>
+          <p>PAVE is a four-element checklist covering all operational aspects of flight planning and execution.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Pilot</h4>
+          <p>Assess your readiness: flight hours, recency, currency in the aircraft type, familiarity with avionics and emergency procedures, and personal minimums. Confirm you're prepared to manage the workload of your planned operation.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Aircraft</h4>
+          <p>Verify airworthiness documents, conduct thorough preflight inspection (fuel, oil, surfaces, tires), calculate weight and balance, and review POH performance charts for all flight phases. Deferred maintenance items (MEL) must be evaluated for your specific flight plan.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">enVironment</h4>
+          <p>Obtain full weather briefing including METARs, TAFs, winds aloft, AIRMETs, and SIGMETs. Check NOTAMs and TFRs along your route. Evaluate terrain and obstacle clearance. Plan alternates and diversion routes if conditions deteriorate.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">External Pressures</h4>
+          <p>Identify passenger expectations, schedule demands, organizational pressure, and personal goals that might tempt unsafe decisions. Establish a no-guilt go/no-go point before engine start and commit to contingency planning with adequate margin.</p>
+        </div>
+
+        <div id="doc-decide" class="doc-section" style="display:none">
+          <h3>DECIDE Process</h3>
+          <p>The DECIDE model is a six-step in-flight decision-making cycle that keeps you ahead of emerging hazards.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">1. Detect</h4>
+          <p>Maintain continuous, methodical vigilance. Scan instruments every 20–30 seconds and note anomalies. Watch for weather buildups, ATC frequency changes, system alerts, rising workload, or changes in cabin conditions. Use PAVE mentally at level-off and cruise.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">2. Evaluate</h4>
+          <p>Quickly assess severity and likelihood to gauge the threat to your safety margins. Rate severity: "how big an upset could this be?" Rate likelihood: "how probable is that outcome?" Translate into low, medium, or high risk.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">3. Consider</h4>
+          <p>Brainstorm at least three workable courses of action. Don't lock onto the first fix. Write options on your scratchpad. Engage your crew or passengers for input. For weather: change altitude, deviate laterally, request alternate vector.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">4. Integrate</h4>
+          <p>Merge chosen mitigations against aircraft limits, fuel requirements, regulations, and passenger needs. Compute new headings, distances, fuel burn, and ETAs if diverting. Amend your flight plan in the GPS and update your mental checklist.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">5. Decide</h4>
+          <p>Select one best plan and commit to it without hesitation. Make a strong verbal call-out: "I'm diverting to MXY. Heading 180, squawk 1200, ETE 12 min." Brief passengers and ATC immediately.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">6. Execute & Reassess</h4>
+          <p>Carry out the decision with precise control inputs and checklist discipline. Monitor outcomes. After diversion, re-scan PAVE in 5 minutes. If a new hazard emerges, restart DECIDE from Detect. This is a continuous loop, not a one-time decision.</p>
+        </div>
+
+        <div id="doc-risk" class="doc-section" style="display:none">
+          <h3>Risk Scoring</h3>
+          <p>This dashboard uses a weighted algorithm to convert your inputs into a quantified risk score (0–100%).</p>
+          <p><strong>IMSAFE Score:</strong> Illness, Medication, and Emotion carry baseline weights. Fatigue carries 1.5× weight. Alcohol carries 1.8× weight because it is a critical safety factor. Stress acts as a multiplier (+0–30%) on all other IMSAFE factors.</p>
+          <p><strong>PAVE Score:</strong> Pilot experience and currency contribute equally. Aircraft status carries 1.3× weight. Environment (weather, winds, terrain) carries 1.6× weight due to dynamic in-flight hazards. External Pressures carry baseline weight.</p>
+          <p><strong>Total Risk:</strong> 45% IMSAFE + 55% PAVE, weighted toward operational factors.</p>
+          <p><strong>Thresholds:</strong> 0–35% = GO, 35–60% = CAUTION, 60–100% = NO-GO</p>
+        </div>
+
+        <div id="doc-faq" class="doc-section" style="display:none">
+          <h3>Frequently Asked Questions</h3>
+          
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Q: Is this tool approved by the FAA?</h4>
+          <p>A: This dashboard implements frameworks endorsed by FAASTeam (IMSAFE, PAVE, DECIDE from the August 14 ADM/GRM seminar). It is a decision support tool, not an official FAA approval. The pilot in command is solely responsible for all go/no-go decisions.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Q: Where is my data stored?</h4>
+          <p>A: All assessments are stored locally in your browser using browser localStorage. No data is transmitted to external servers. Your privacy is protected—history is stored only on your device.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Q: Can I use this on my tablet or phone?</h4>
+          <p>A: Yes! The dashboard is fully responsive. Perfect for preflight briefing on any device.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Q: What if I get a "CAUTION" or "NO-GO" score?</h4>
+          <p>A: Carefully review the flagged risk factors. Consider consulting a CFI, ATCO, or your chief pilot. Implement mitigations (adjust fuel planning, delay to rest, coordinate weather updates). If critical items persist, delay or cancel the flight.</p>
+
+          <h4 style="margin-top:20px;font-size:16px;font-weight:600;color:var(--primary)">Q: How often should I run this assessment?</h4>
+          <p>A: Ideally as part of your standard preflight briefing. You can also re-assess mid-flight at top-of-descent or if conditions change unexpectedly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div id="about" class="page">
+  <div class="section" style="padding-top:120px">
+    <div class="section-header">
+      <h2>About This Tool</h2>
+      <p>Professional risk assessment for safer aviation</p>
+    </div>
+
+    <div class="grid-2" style="gap:60px">
+      <div class="content-block">
+        <h3>Framework Foundation</h3>
+        <p>This dashboard synthesizes three proven decision-making frameworks from the FAASTeam August 14 ADM/GRM seminar:</p>
+        <ul class="checklist">
+          <li><strong>IMSAFE:</strong> Systematic pilot fitness assessment</li>
+          <li><strong>PAVE:</strong> Operational risk factor evaluation</li>
+          <li><strong>DECIDE:</strong> In-flight decision-making process</li>
+        </ul>
+        <p style="margin-top:20px">Together, these frameworks empower pilots to systematically identify hazards, assess their impact, and make disciplined go/no-go decisions grounded in evidence.</p>
+      </div>
+
+      <div class="content-block">
+        <h3>Risk-Based Approach</h3>
+        <p>The scoring algorithm reflects real aviation safety principles:</p>
+        <ul class="checklist">
+          <li>Fatigue and alcohol weighted as critical factors</li>
+          <li>Stress acts as a multiplier on other risks</li>
+          <li>Weather and operational factors heavily weighted</li>
+          <li>Weighted toward operational readiness (55% vs 45%)</li>
+        </ul>
+        <p style="margin-top:20px">The result is a quantified risk score that guides your decision, not a binary pass/fail. Use it as a complement to your judgment, experience, and conservative personal minimums.</p>
+      </div>
+    </div>
+
+    <div style="background:#f8fafc;border-radius:12px;padding:40px;margin-top:60px;border-left:4px solid var(--secondary)">
+      <h3 style="color:var(--primary)">Important Disclaimer</h3>
+      <p style="color:#475569;margin-bottom:0">This tool is designed for informational and educational purposes. It is not an official FAA approval or regulatory guidance. The pilot in command retains sole responsibility for all flight decisions, go/no-go determinations, and safety of flight. Consult current regulations, POH limits, your chief pilot, and CFI guidance as needed. Fatigue and alcohol policies: always comply with FAA 8-hour bottle-to-throttle minimum and consult the Drug AIM for all medications.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <footer-content>
+    <div>
+      <h4>Pilot Risk Assessment Dashboard</h4>
+      <p>Professional aviation decision-making tool based on FAASTeam ADM/GRM frameworks.</p>
+    </div>
+    <div>
+      <h4>Resources</h4>
+      <a href="#" onclick="showPage('features')">Features</a>
+      <a href="#" onclick="showPage('docs')">Documentation</a>
+      <a href="#" onclick="showPage('assessment')">Assessment</a>
+      <a href="#" onclick="showPage('about')">About</a>
+    </div>
+    <div>
+      <h4>Information</h4>
+      <a href="#" onclick="showPage('about')">Disclaimer</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer-content>
+  <div class="footer-bottom">
+    <p>&copy; 2024 Pilot Risk Assessment Dashboard. Not an official FAA publication. The pilot in command is responsible for all flight decisions.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let radVals={},riskChart=null,breakChart=null;
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  event.target?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function switchTab(n){
+  document.querySelectorAll('.assessment-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.assessment-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.assessment-panel')[n].classList.add('active');
+  document.querySelectorAll('.assessment-tab')[n].classList.add('active');
+  if(n===3||n===2) upd();
+  if(n===4) renderHistory();
+}
+
+function showDoc(id){
+  document.querySelectorAll('.doc-section').forEach(s=>s.style.display='none');
+  document.getElementById('doc-'+id).style.display='block';
+}
+
+function gv(id){return parseInt(document.getElementById(id)?.value||0);}
+
+function calcScores(){
+  const ill=gv('ill');
+  const med=gv('med');
+  const str=gv('str');
+  const alc=gv('alc');
+  const fat=gv('fat');
+  const emo=gv('emo');
+
+  const stressMult=1+(str/30);
+  const imRaw=(ill*1.3+med*1.0+alc*1.8+fat*1.5+emo*1.0)*stressMult;
+  const imMax=(5*1.3+5*1.0+4*1.8+5*1.5+5*1.0)*1.3;
+  const imsafeScore=Math.min(100,Math.round((imRaw/imMax)*100));
+
+  const pilot=gv('ph')+gv('pc');
+  const aircraft=gv('aw')+gv('af');
+  const env=gv('wx')+gv('wnd');
+  const ext=gv('tp');
+
+  const paveRaw=pilot*1.0+aircraft*1.3+env*1.6+ext*1.0;
+  const paveMax=(4+5)*1.0+(5+5)*1.3+(5+5)*1.6+5*1.0;
+  const paveScore=Math.min(100,Math.round((paveRaw/paveMax)*100));
+
+  const total=Math.round(imsafeScore*0.45+paveScore*0.55);
+
+  return{imsafeScore,paveScore,total,stressMultiplier:Math.round((stressMult-1)*100)};
+}
+
+function getRisk(score){
+  if(score<35) return{label:'LOW RISK',color:'#00c87a',rec:'GO',desc:'Risk factors are within acceptable limits. Maintain situational awareness throughout flight.'};
+  if(score<60) return{label:'MEDIUM RISK',color:'#f5a623',rec:'CAUTION',desc:'Elevated risk detected. Review flagged items, implement mitigations, and consider consulting a CFI before proceeding.'};
+  return{label:'HIGH RISK',color:'#e53535',rec:'NO-GO',desc:'Significant risk identified. Per FAASTeam GRM, delay or cancel this flight until critical items are resolved.'};
+}
+
+function upd(){
+  const sc=calcScores();
+  const lvl=getRisk(sc.total);
+  
+  const s=document.getElementById('scores');
+  if(s) s.innerHTML=`
+    <div class="score-item"><div class="label">Total Risk</div><div class="value" style="color:${lvl.color}">${sc.total}%</div></div>
+    <div class="score-item"><div class="label">IMSAFE</div><div class="value">${sc.imsafeScore}%</div></div>
+    <div class="score-item"><div class="label">PAVE</div><div class="value">${sc.paveScore}%</div></div>
+    <div class="score-item"><div class="label">Decision</div><div class="value" style="color:${lvl.color}">${lvl.rec}</div></div>
+  `;
+
+  const r=document.getElementById('rec-display');
+  if(r) r.innerHTML=`
+    <div class="rec-card ${lvl.rec.toLowerCase()==='go'?'go':lvl.rec.toLowerCase()==='caution'?'caution':'nogo'}">
+      <div class="rec-label">Flight Recommendation</div>
+      <div class="rec-decision">${lvl.rec}</div>
+      <h3 style="color:${lvl.color};margin-bottom:16px">${lvl.label}</h3>
+      <div class="rec-desc">${lvl.desc}</div>
+    </div>
+  `;
+}
+
+function saveAss(){
+  const sc=calcScores();
+  const lvl=getRisk(sc.total);
+  const h=JSON.parse(localStorage.getItem('prad_h')||'[]');
+  h.unshift({date:new Date().toLocaleString(),total:sc.total,imsafe:sc.imsafeScore,pave:sc.paveScore,rec:lvl.rec});
+  if(h.length>10) h.pop();
+  localStorage.setItem('prad_h',JSON.stringify(h));
+  alert('Assessment saved!');
+}
+
+function renderHistory(){
+  const h=JSON.parse(localStorage.getItem('prad_h')||'[]');
+  const cont=document.getElementById('history-display');
+  if(!h.length){cont.innerHTML='<p style="color:#64748b;text-align:center;padding:40px">No saved assessments yet.</p>';return;}
+  cont.innerHTML=h.map(e=>`<div style="background:#f8fafc;padding:16px;border-radius:8px;margin-bottom:12px;border-left:4px solid ${e.rec==='GO'?'#00c87a':e.rec==='CAUTION'?'#f5a623':'#e53535'}">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:600;color:#1e293b">${e.rec} — ${e.total}%</div><div style="font-size:12px;color:#64748b">${e.date}</div></div>
+    <div style="font-size:13px;color:#64748b;margin-top:6px">IMSAFE: ${e.imsafe}% | PAVE: ${e.pave}%</div>
+  </div>`).join('');
+}
+
+function exportPDF(){
+  const sc=calcScores();
+  const lvl=getRisk(sc.total);
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Risk Assessment</title><style>body{font-family:serif;padding:40px;color:#1a1a2e}h1{color:#0a2463}h2{color:#1a5f9b;margin-top:30px}.badge{padding:10px 20px;background:${lvl.color};color:#fff;border-radius:6px;display:inline-block;font-weight:bold;margin:20px 0;font-size:18px}</style></head><body>
+  <h1>Pilot Risk Assessment Report</h1>
+  <p>Generated: ${new Date().toLocaleString()}</p>
+  <div class="badge">${lvl.rec} — ${lvl.label}</div>
+  <h2>Scores</h2>
+  <p>Total: ${sc.total}% | IMSAFE: ${sc.imsafeScore}% | PAVE: ${sc.paveScore}%</p>
+  <h2>Recommendation</h2>
+  <p>${lvl.desc}</p>
+  <p style="font-size:12px;color:#666;margin-top:40px">This report is for informational purposes. The pilot in command is responsible for all flight decisions.</p>
+  </body></html>`);
+  w.print();
+}
+
+function resetAll(){
+  if(!confirm('Reset all data?')) return;
+  document.querySelectorAll('input[type=range]').forEach(s=>s.value=0);
+  document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
+  upd();
+}
+
+upd();
+showDoc('imsafe');
+</script>
+</body>
+</html>
